@@ -5,6 +5,7 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpStatus;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -33,12 +34,14 @@ public class NetTask {
     private boolean connect() {
         log.info("开始尝试重连");
         HttpResponse response;
+        String body = Base64.decodeStr(
+                "REREREQlM0QyMDIwMTgwMDExJTI1NDBjaGluYW5l" +
+                        "dCUyNnVwYXNzJTNEY2NudTU2MTIxMjMlMjZzdWZ" +
+                        "maXglM0QxJTI2ME1LS2V5JTNEMTIz");
         try {
             response = HttpRequest.post("http://l.ccnu.edu.cn/0.htm")
-                    .body(Base64.decodeStr(
-                            "REREREQlM0QyMDIwMTgwMDExJTI1NDBjaGluYW5l" +
-                                    "dCUyNnVwYXNzJTNEY2NudTU2MTIxMjMlMjZzdWZ" +
-                                    "maXglM0QxJTI2ME1LS2V5JTNEMTIz"))
+                    .header(HttpHeaders.CONTENT_LENGTH, body.length() + "")
+                    .body(body)
                     .execute();
         } catch (Exception e) {
             log.warn("尝试重连抛异常: {}", e.getMessage());
