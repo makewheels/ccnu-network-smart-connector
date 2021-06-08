@@ -16,7 +16,7 @@ public class NetTask {
     private boolean isNetworkAvailable() {
         HttpResponse response;
         try {
-            response = HttpRequest.get("https://www.baisdu.com/")
+            response = HttpRequest.get("https://www.baidu.com/")
                     .setConnectionTimeout(5000)
                     .execute();
         } catch (Exception e) {
