@@ -67,7 +67,7 @@ public class NetTask {
         return true;
     }
 
-    @Scheduled(fixedRate = 1000 * 3)
+    @Scheduled(fixedRate = 1000 * 60)
     private void autoCheck() {
         boolean networkAvailable = isNetworkAvailable();
         log.info("检查网络结果: {}", networkAvailable);
