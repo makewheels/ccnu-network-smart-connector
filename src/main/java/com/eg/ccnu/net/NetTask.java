@@ -37,7 +37,6 @@ public class NetTask {
         String body = Base64.decodeStr(
                 "REREREQ9MjAyMDE4MDAxMSU0MGNoaW5hbmV0Jn" +
                         "VwYXNzPWNjbnU1NjEyMTIzJnN1ZmZpeD0xJjBNS0tleT0xMjM=");
-        System.out.println(body);
         try {
             response = HttpRequest.post("http://l.ccnu.edu.cn/0.htm")
                     .header(HttpHeaders.CONTENT_LENGTH, body.length() + "")
