@@ -35,9 +35,9 @@ public class NetTask {
         log.info("开始尝试重连");
         HttpResponse response;
         String body = Base64.decodeStr(
-                "REREREQlM0QyMDIwMTgwMDExJTI1NDBjaGluYW5l" +
-                        "dCUyNnVwYXNzJTNEY2NudTU2MTIxMjMlMjZzdWZ" +
-                        "maXglM0QxJTI2ME1LS2V5JTNEMTIz");
+                "REREREQlM0QyMDIwMTgwMDExJTI1NDBjaGl" +
+                        "uYW5ldCUyNnVwYXNzJTNEY2NudTU2MTIxMjMlM" +
+                        "jZzdWZmaXglM0QxJTI2ME1LS2V5JTNEMTIz");
         try {
             response = HttpRequest.post("http://l.ccnu.edu.cn/0.htm")
                     .header(HttpHeaders.CONTENT_LENGTH, body.length() + "")
