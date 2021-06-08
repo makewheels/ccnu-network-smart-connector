@@ -16,7 +16,7 @@ public class NetTask {
     private boolean isNetworkAvailable() {
         HttpResponse response;
         try {
-            response = HttpRequest.get("https://www.google.com/")
+            response = HttpRequest.get("https://www.baidu.com/")
                     .setConnectionTimeout(5000)
                     .execute();
         } catch (Exception e) {
@@ -70,7 +70,9 @@ public class NetTask {
 
     @Scheduled(fixedRate = 1000 * 3)
     private void autoCheck() {
-        if (!isNetworkAvailable())
+        boolean networkAvailable = isNetworkAvailable();
+        log.info("检查网络结果: {}", networkAvailable);
+        if (!networkAvailable)
             connect();
     }
 }
