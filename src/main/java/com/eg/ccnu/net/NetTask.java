@@ -16,7 +16,7 @@ public class NetTask {
     private boolean isNetworkAvailable() {
         HttpResponse response;
         try {
-            response = HttpRequest.get("https://www.baidu.com/")
+            response = HttpRequest.get("https://www.baisdu.com/")
                     .setConnectionTimeout(5000)
                     .execute();
         } catch (Exception e) {
@@ -35,9 +35,9 @@ public class NetTask {
         log.info("开始尝试重连");
         HttpResponse response;
         String body = Base64.decodeStr(
-                "REREREQlM0QyMDIwMTgwMDExJTI1NDBjaGl" +
-                        "uYW5ldCUyNnVwYXNzJTNEY2NudTU2MTIxMjMlM" +
-                        "jZzdWZmaXglM0QxJTI2ME1LS2V5JTNEMTIz");
+                "REREREQ9MjAyMDE4MDAxMSU0MGNoaW5hbmV0Jn" +
+                        "VwYXNzPWNjbnU1NjEyMTIzJnN1ZmZpeD0xJjBNS0tleT0xMjM=");
+        System.out.println(body);
         try {
             response = HttpRequest.post("http://l.ccnu.edu.cn/0.htm")
                     .header(HttpHeaders.CONTENT_LENGTH, body.length() + "")
