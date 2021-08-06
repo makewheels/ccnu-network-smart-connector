@@ -101,8 +101,9 @@ public class NetTask {
             e.printStackTrace();
             return false;
         }
-        if (response.getStatus() == 200) {
-            log.info("ccnu连接成功, body = " + response.body());
+        if (response.getStatus() == 200
+                && response.body().contains("您已登录成功，欢迎使用！请不要关闭本页。")) {
+            log.info("ccnu连接成功");
             return true;
         } else {
             log.warn("连接失败，可能是请求有问题，http status = {}, response body = {}",
@@ -132,7 +133,9 @@ public class NetTask {
         boolean isInternetAvailable = isInternetAvailable();
 //        log.info("检查外网连通性: {}", isInternetAvailable);
         if (!isInternetAvailable) {
+            //设置mac
             setRouterNewMac();
+            //等待分配ip，检测方法，是否连通ccnu认证网页
             for (int i = 0; i < 20; i++) {
                 boolean loginCcnuPageAvailable = isLoginCcnuPageAvailable();
                 log.info("检查ccnu连通性: " + loginCcnuPageAvailable + " , 重试次数 = " + i);
@@ -146,7 +149,20 @@ public class NetTask {
                     }
                 }
             }
-            connectCcnu();
+            //ccnu网页认证
+            boolean connectCcnu = connectCcnu();
+            for (int i = 0; i < 10; i++) {
+                if (connectCcnu) {
+                    break;
+                } else {
+                    connectCcnu = connectCcnu();
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
         isRunning = false;
     }
