@@ -130,7 +130,7 @@ public class NetTask {
         }
         isRunning = true;
         boolean isInternetAvailable = isInternetAvailable();
-        log.info("检查外网连通性: {}", isInternetAvailable);
+//        log.info("检查外网连通性: {}", isInternetAvailable);
         if (!isInternetAvailable) {
             setRouterNewMac();
             for (int i = 0; i < 20; i++) {
