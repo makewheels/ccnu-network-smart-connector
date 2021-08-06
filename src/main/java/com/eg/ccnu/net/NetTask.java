@@ -123,7 +123,7 @@ public class NetTask {
 
     private static boolean isRunning = false;
 
-    @Scheduled(fixedRate = 1000 * 40)
+    @Scheduled(fixedRate = 1000 * 25)
     private synchronized void autoCheck() {
         if (isRunning) {
             return;
