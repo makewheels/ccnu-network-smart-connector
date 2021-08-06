@@ -5,6 +5,7 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpStatus;
 import com.alibaba.fastjson.JSONObject;
+import com.sun.corba.se.impl.encoding.IDLJavaSerializationInputStream;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -121,8 +122,14 @@ public class NetTask {
         return true;
     }
 
+    private static boolean isRunning = false;
+
     @Scheduled(fixedRate = 1000 * 40)
-    private void autoCheck() {
+    private synchronized void autoCheck() {
+        if (isRunning) {
+            return;
+        }
+        isRunning = true;
         boolean isInternetAvailable = isInternetAvailable();
         log.info("检查外网连通性: {}", isInternetAvailable);
         if (!isInternetAvailable) {
@@ -142,6 +149,7 @@ public class NetTask {
             }
             connectCcnu();
         }
+        isRunning = false;
     }
 
 }
