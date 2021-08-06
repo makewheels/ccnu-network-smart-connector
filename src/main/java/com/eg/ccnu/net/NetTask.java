@@ -102,7 +102,7 @@ public class NetTask {
             return false;
         }
         if (response.getStatus() == 200) {
-            log.info("ccnu连接成功");
+            log.info("ccnu连接成功, body = " + response.body());
             return true;
         } else {
             log.warn("连接失败，可能是请求有问题，http status = {}, response body = {}",
