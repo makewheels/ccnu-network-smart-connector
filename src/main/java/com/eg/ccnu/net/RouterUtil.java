@@ -68,7 +68,7 @@ public class RouterUtil {
      * @param token
      * @param mac
      */
-    public static void setMac(String token, String mac) {
+    public static JSONObject setMac(String token, String mac) {
         String json = HttpUtil.get("http://" + ROUTER_DOMAIN + "/cgi-bin/luci/;" +
                 "stok=" + token + "/api/xqnetwork/mac_clone?" +
                 "mac=" + URLUtil.encode(mac));
@@ -76,11 +76,7 @@ public class RouterUtil {
         Integer code = jsonObject.getInteger("code");
         System.out.println("给路由器设置新mac = " + mac +
                 " 返回code = " + code + " 完整返回json为: " + json);
-        if (code == 0) {
-            System.out.println("路由器设置新mac成功");
-        } else {
-            System.err.println("路由器设置mac失败");
-        }
+        return jsonObject;
     }
 
     public static void main(String[] args) {
@@ -88,8 +84,25 @@ public class RouterUtil {
         String pwd = getPwd(nonce);
         String token = loginAndGetToken(pwd, nonce);
 
-        String mac = MacUtil.generateMac();
-        setMac(token, mac);
+        JSONObject jsonObject = setMac(token, MacUtil.generateMac());
+        Integer code = jsonObject.getInteger("code");
+        if (code == 0) {
+            System.out.println("路由器设置新mac成功");
+        } else if (code == 1637) {
+            System.out.println("路由器设置mac失败，因为路由器说了，这是组播地址");
+        } else {
+            System.out.println("路由器设置mac失败，原因未知 code = " + code);
+        }
+        int count = 0;
+        while (code == 1637) {
+            count++;
+            if (count >= 10) {
+                System.err.println("路由器设置mac，都试了" + count + "回了，来看看咋回事吧");
+            }
+            System.out.println("开始尝试创新生成mac");
+            jsonObject = setMac(token, MacUtil.generateMac());
+            code = jsonObject.getInteger("code");
+        }
     }
 
 }
