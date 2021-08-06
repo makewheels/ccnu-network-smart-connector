@@ -62,19 +62,19 @@ public class NetTask {
         JSONObject jsonObject = RouterUtil.setMac(token, MacUtil.generateMac());
         Integer code = jsonObject.getInteger("code");
         if (code == 0) {
-            System.out.println("路由器设置新mac成功");
+            log.info("路由器设置新mac成功");
         } else if (code == 1637) {
-            System.out.println("路由器设置mac失败，因为路由器说了，这是组播地址");
+            log.info("路由器设置mac失败，因为路由器说了，这是组播地址");
         } else {
-            System.out.println("路由器设置mac失败，原因未知 code = " + code);
+            log.error("路由器设置mac失败，原因未知 code = " + code);
         }
         int count = 0;
         while (code == 1637) {
             count++;
             if (count >= 10) {
-                System.err.println("路由器设置mac，都试了" + count + "回了，来看看咋回事吧");
+                log.error("路由器设置mac，都试了" + count + "回了，来看看咋回事吧");
             }
-            System.out.println("开始尝试创新生成mac");
+            log.info("开始尝试创新生成mac");
             jsonObject = RouterUtil.setMac(token, MacUtil.generateMac());
             code = jsonObject.getInteger("code");
         }
@@ -129,7 +129,7 @@ public class NetTask {
             setRouterNewMac();
             for (int i = 0; i < 20; i++) {
                 boolean loginCcnuPageAvailable = isLoginCcnuPageAvailable();
-                log.info("ccnu连通性: " + loginCcnuPageAvailable + " , 重试次数 = " + i);
+                log.info("检查ccnu连通性: " + loginCcnuPageAvailable + " , 重试次数 = " + i);
                 if (loginCcnuPageAvailable) {
                     break;
                 } else {

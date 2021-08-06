@@ -6,6 +6,7 @@ import cn.hutool.crypto.digest.DigestUtil;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -13,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * 路由器工具类
  */
+@Slf4j
 public class RouterUtil {
     public static final String ROUTER_DOMAIN = "192.168.10.1";
 
@@ -51,13 +53,13 @@ public class RouterUtil {
         String json = HttpUtil.post(url, body);
         JSONObject jsonObject = JSON.parseObject(json);
         Integer code = jsonObject.getInteger("code");
-        System.out.println("登陆路由器, code = " + code + " 完整返回: " + json);
+        log.info("登陆路由器, code = " + code + " 完整返回: " + json);
         if (code == 0) {
             String token = jsonObject.getString("token");
-            System.out.println("登陆返回code为0，登陆成功，返回token = " + token);
+            log.info("登陆返回code为0，登陆成功，返回token = " + token);
             return token;
         } else {
-            System.err.println("登陆路由器返回code不为0，发生错误，需要排查");
+            log.error("登陆路由器返回code不为0，发生错误，需要排查");
             return null;
         }
     }
@@ -74,7 +76,7 @@ public class RouterUtil {
                 "mac=" + URLUtil.encode(mac));
         JSONObject jsonObject = JSON.parseObject(json);
         Integer code = jsonObject.getInteger("code");
-        System.out.println("给路由器设置新mac = " + mac +
+        log.info("给路由器设置新mac = " + mac +
                 " 返回code = " + code + " 完整返回json为: " + json);
         return jsonObject;
     }
