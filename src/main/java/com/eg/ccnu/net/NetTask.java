@@ -13,11 +13,35 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class NetTask {
+    public static final String LOGIN_CCNU_DOMAIN = "10.220.250.50";
 
-    private boolean isNetworkAvailable() {
+    /**
+     * 检查外网连通性
+     *
+     * @return
+     */
+    private boolean isInternetAvailable() {
         HttpResponse response;
         try {
             response = HttpRequest.get("https://www.baidu.com/")
+                    .setConnectionTimeout(5000)
+                    .execute();
+        } catch (Exception e) {
+            return false;
+        }
+        int status = response.getStatus();
+        return status == HttpStatus.HTTP_OK;
+    }
+
+    /**
+     * 检查登陆ccnu网页连通性
+     *
+     * @return
+     */
+    private boolean isLoginCcnuPageAvailable() {
+        HttpResponse response;
+        try {
+            response = HttpRequest.get("http://" + LOGIN_CCNU_DOMAIN + "/0.htm")
                     .setConnectionTimeout(5000)
                     .execute();
         } catch (Exception e) {
@@ -62,23 +86,23 @@ public class NetTask {
      * @return
      */
     private boolean connectCcnu() {
-        log.info("开始尝试重连");
+        log.info("开始尝试重连ccnu");
         HttpResponse response;
         String body = Base64.decodeStr(
                 "REREREQ9MjAyMDE4MDAxMSU0MGNoaW5hbmV0Jn" +
                         "VwYXNzPWNjbnU1NjEyMTIzJnN1ZmZpeD0xJjBNS0tleT0xMjM=");
         try {
-            response = HttpRequest.post("http://10.220.250.50/0.htm")
+            response = HttpRequest.post("http://" + LOGIN_CCNU_DOMAIN + "/0.htm")
                     .header(HttpHeaders.CONTENT_LENGTH, body.length() + "")
                     .body(body)
                     .execute();
         } catch (Exception e) {
-            log.warn("尝试重连抛异常: {}", e.getMessage());
+            log.warn("尝试重连ccnu抛异常: {}", e.getMessage());
             e.printStackTrace();
             return false;
         }
         if (response.getStatus() == 200) {
-            log.info("连接成功");
+            log.info("ccnu连接成功");
             return true;
         } else {
             log.warn("连接失败，可能是请求有问题，http status = {}, response body = {}",
@@ -97,12 +121,25 @@ public class NetTask {
         return true;
     }
 
-    @Scheduled(fixedRate = 1000 * 60)
+    @Scheduled(fixedRate = 1000 * 40)
     private void autoCheck() {
-        boolean networkAvailable = isNetworkAvailable();
-        log.info("检查网络结果: {}", networkAvailable);
-        if (!networkAvailable) {
+        boolean isInternetAvailable = isInternetAvailable();
+        log.info("检查外网连通性: {}", isInternetAvailable);
+        if (!isInternetAvailable) {
             setRouterNewMac();
+            for (int i = 0; i < 20; i++) {
+                boolean loginCcnuPageAvailable = isLoginCcnuPageAvailable();
+                log.info("ccnu连通性: " + loginCcnuPageAvailable + " , 重试次数 = " + i);
+                if (loginCcnuPageAvailable) {
+                    break;
+                } else {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
             connectCcnu();
         }
     }
